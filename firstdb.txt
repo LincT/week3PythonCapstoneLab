@@ -1,0 +1,44 @@
+import sqlite3, traceback
+try:
+    db = sqlite3.connect('my_first_db.db') # Creates or opens database file
+
+    cur = db.cursor()  # Need a cursor object to perform operations
+
+    # Create a table
+    cur.execute('create table if not exists phones (brand text, version int)')
+
+    # get input from user
+    brand = input("brand? ")
+    version = int(input("version as int? "))
+
+    # Add some data
+    with db:
+        cur.execute('insert into phones values ("Android", 5)')
+        cur.execute('insert into phones values ("iPhone", 6)')
+        cur.execute('insert into phones values ("BlackBerry",7)')
+        cur.execute('insert into phones values (?, ?)', (brand, version))
+
+    db.commit()  # Save changes
+
+    cur.execute('select * from phones')
+except sqlite3.Error as e:
+    print('rolling back due to error: ', e)
+
+finally:
+    for row in cur.execute('select * from phones'):
+        print(row)
+
+    cur.execute('drop table phones') # Delete table
+
+    db.commit()  # Ask the database to save changes
+
+    db.close()
+# list comprehensions. see also dictionary comprehensions (google)
+my_list = [-45, 1, 4, -4, 34, 3]
+print([x for x in my_list if x >= 0])
+
+list2 = ['hello', 'world', 'python', 'kitten']
+print([x.upper() for x in list2])
+
+list3 = ['js', 'c#', 'java', 'visual basic.net']
+print([x.upper() for x in list3 if len(x) > 3])
